@@ -4,7 +4,7 @@
 
 AgnosticD V2 is a streamlined, updated version of AgnosticD designed for easy adoption and simplified development workflows. This guide explains how to set up AgnosticD V2 and deploy both configurations and post-deployment customizations (formerly known as workloads).
 
-*Supported platforms*: AgnosticD V2 supports RHEL 9.5+, Fedora 41+, and macOS Sequoia+.
+*Supported platforms*: AgnosticD V2 supports RHEL 9.5+, RHEL 10.0+, Fedora 41+, and macOS Sequoia+.
 
 == Local Development Directory Structure Requirements
 
@@ -18,7 +18,7 @@ Choose a root directory (for example, `~/Development` or `~/aad`). The setup scr
 ** `secrets.yml` for general secrets (OpenShift pull secrets, Red Hat Satellite subscription information)
 ** `secrets-sandboxXXX.yml` for AWS Open Environment connection details from https://demo.redhat.com
 * *agnosticd-v2-output*: Output files from Ansible runs in `{{ guid }}` subdirectories
-* *agnosticd-v2-virtualenv*: Python 3.11 virtual environment containing ansible-navigator for deployment execution (managed automatically by deployment scripts)
+* *agnosticd-v2-virtualenv*: Python 3.12+ virtual environment containing ansible-navigator for deployment execution (managed automatically by deployment scripts)
 
 [IMPORTANT]
 ====
