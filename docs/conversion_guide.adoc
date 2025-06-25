@@ -14,11 +14,10 @@ NOTE: This guide covers all known changes. We will update it as additional varia
 === Cloud Provider Management
 Cloud providers are now managed in a separate collection rather than as part of the core repository. You can lock a specific version by setting the `cloud_provider_version` variable to a branch or tag. If not specified, the system defaults to `main`.
 
-*Cloud provider playbook locations*: Cloud provider playbooks remain in AgnosticD V2 but have moved to the `cloud_provider/{{ cloud_provider }}` directory. Valid playbooks include:
+*Cloud provider playbook locations*: Cloud provider playbooks remain in AgnosticD V2 but have moved to the `cloud_provider/{{ cloud_provider }}` directory. Necessary playbooks include (note that lifecycle should be managed by a role in the cloud provider collection now):
 
 * `infrastructure_deployment.yml`
 * `destroy_env.yml`
-* `lifecycle.yml`
 
 All roles have been or should be refactored into collections (following the `aws` cloud provider model).
 
@@ -112,6 +111,7 @@ bastion_install_ftl: false
 This section provides a step-by-step example of converting an OpenShift Cluster workshop configuration from V1 to V2.
 
 === Initial Setup
+
 . *Create directory structure*: Create a new directory in AgnosticD V2. The `agd_v2` directory already exists, and the `account.yml` file contains default variable mappings for Babylon deployment.
 
 . *Copy configuration files*: Copy the following files from your V1 config:
@@ -120,6 +120,7 @@ This section provides a step-by-step example of converting an OpenShift Cluster 
 ** `description.adoc`
 
 === Babylon Metadata Changes
+
 Update the following Babylon `__meta__` settings:
 
 * *Asset UUID*: Generate a new `asset_uuid`
@@ -130,7 +131,7 @@ Update the following Babylon `__meta__` settings:
 [source,yaml]
 ----
 deployer:
-  scm_url: https://github.com/rhpds/agnosticd_v2
+  scm_url: https://github.com/agnosticd/agnosticd_v2
   scm_ref: main
 ----
 
