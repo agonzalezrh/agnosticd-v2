@@ -37,7 +37,7 @@ Always run the `agd` script from within the *agnosticd-v2* directory.
 +
 [source,sh]
 ----
-brew install python@3.11 podman
+brew install python@3.13 podman
 ----
 
 . *Podman configuration note*: On macOS, Podman uses a virtual machine. The setup script creates a Podman machine named `agnosticd` and configures it as the default machine (required by ansible-navigator). Be aware of this if you use the default Podman machine for other purposes.
@@ -55,11 +55,19 @@ NOTE: These instructions are tested only on RHEL 9.5 and RHEL 9.6. The setup scr
 sudo subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
 ----
 
+. Double check that if you run `python3` you actually are getting Python 3.12. If not follow these steps to make Python 3.12 the default Python3 interpreter:
++
+[source,sh]
+----
+sudo alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 120
+sudo alternatives --config python3 # And then pick the Python 3 interpreter as the default
+----
+
 . *Install prerequisites*:
 +
 [source,sh]
 ----
-sudo dnf -y install git python3.11 python3.11-devel gcc oniguruma-devel
+sudo dnf -y install git python3.12 python3.12-devel gcc oniguruma-devel podman
 ----
 
 . Continue with <<common-setup,Common Setup>> steps.
@@ -75,7 +83,7 @@ NOTE: These instructions are tested only on RHEL 10.0.
 sudo subscription-manager repos --enable codeready-builder-for-rhel-10-$(arch)-rpms
 ----
 
-. *Install prerequisites*:
+. *Install prerequisites* (on RHEL 10 Python 3.12 is the default):
 +
 [source,sh]
 ----
@@ -86,7 +94,7 @@ sudo dnf -y install git python3 python3-devel gcc oniguruma-devel podman
 
 === Fedora 41 Prerequisites
 
-. *Install prerequisites*:
+. *Install prerequisites* (on Fedora 41 and above Python 3.13 is already the default):
 +
 [source,sh]
 ----

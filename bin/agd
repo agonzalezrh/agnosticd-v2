@@ -116,9 +116,9 @@ agd_setup() {
 
   if command_exists python3; then
 
-      # ensure the version is 3.11 or higher
-      if [[ "$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1)" -lt 3 || "$(python3 --version | cut -d' ' -f2 | cut -d'.' -f2)" -lt 11 ]]; then
-          echo "  ERROR: Python version 3.11 or higher is required."
+      # ensure the version is 3.12 or higher
+      if [[ "$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1)" -lt 3 || "$(python3 --version | cut -d' ' -f2 | cut -d'.' -f2)" -lt 12 ]]; then
+          echo "  ERROR: Python version 3.12 or higher is required."
           exit 1
       fi
       if [ -d "$VENV_DIR" ]; then
@@ -132,7 +132,7 @@ agd_setup() {
           pip3 install --upgrade pip 2>&1 >/dev/null
       fi
   else
-      echo "  ERROR: Python 3.11 or higher must be installed."
+      echo "  ERROR: Python 3.12 or higher must be installed."
       exit 1
   fi
 
