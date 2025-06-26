@@ -23,7 +23,7 @@
     mode: ug=rw,o=r
 
 - name: Ensure Cloud provider collection is added to requirements
-  when: cloud_provider is defined and cloud_provider | length > 0
+  when: cloud_provider is defined and cloud_provider | length > 0 and cloud_provider != 'none'
   ansible.builtin.blockinfile:
     path: "{{ r_tempfile.path }}"
     block: |
