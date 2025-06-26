@@ -2,8 +2,6 @@
 # ===================================================================
 # Mandatory Variables
 # ===================================================================
-cloud_provider: aws
-cloud_provider_version: main
 config: openshift-workloads
 # ===================================================================
 # End Mandatory Variables
@@ -26,7 +24,7 @@ requirements_content:
 clusters:
 - default:
     api_url: "{{ cluster1.sandbox_openshift_api_url }}"
-    api_key: "{{ cluster1.sandbox_openshfit_api_key }}" 
+    api_token: "{{ cluster1.sandbox_openshfit_api_token }}"
 
 # ===================================================================
 # List of workloads to apply to clusters with cluster selector
