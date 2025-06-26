@@ -1,12 +1,35 @@
 ---
 - name: Step 004 Software
-  hosts: ocp_bastions
+  hosts: localhost
+  connection: local
   become: false
   gather_facts: false
   tasks:
+  - name: Check that workloads is a list
+    when: workloads is not defined or workloads is not sequence
+    ansible.builtin.fail:
+      msg: "Workloads variable is either not defined or is not a list"
+
+  - name: Check if workloads is a simple list (no 'clusters' key)
+    ansible.builtin.set_fact:
+      _workloads_simple_format: >-
+        {{ (workloads | length > 0) and (workloads[0].clusters is not defined) }}
+
+  - name: Convert simple format to complex format
+    when: _workloads_simple_format
+    ansible.builtin.set_fact:
+      _workloads: >-
+        {{ workloads | json_query("[].{name: name, clusters: ['default']}") }}
+
+  - name: Workloads übernehmen (falls bereits komplexes Format)
+    when: not _workloads_simple_format
+    ansible.builtin.set_fact:
+      _workloads: "{{ workloads }}"
+
   - name: Provision Workloads on cluster(s)
     ansible.builtin.include_role:
-      name: openshift_workloads
+      name: openshift_workload_deployer
     vars:
       ACTION: provision
-      openshift_workloads: "{{ cluster_workloads }}"
+      openshift_workload_deployer_workloads: "{{ _workloads }}"
+      openshift_workload_deployer_clusters: "{{ clusters }}"

@@ -10,11 +10,6 @@
     ansible.builtin.debug:
       msg: "Post-Software Steps starting"
 
-  - name: Setup cluster-admin service account
-    when: openshift_cluster_admin_service_account_enable | bool
-    ansible.builtin.include_role:
-      name: openshift_cluster_admin_service_account
-
   - name: Remove AWS Credentials from bastion
     when: cloud_provider == 'aws'
     ansible.builtin.file:
@@ -46,10 +41,22 @@
     ansible.builtin.include_role:
       name: open-env-gcp-user-info
 
-- name: Step 005.2 - Deploy Workloads
+- name: Step 005.2 - Post install cluster configuration
+  hosts: localhost
+  gather_facts: false
+  become: false
+  environment:
+    KUBECONFIG: "{{ hostvars.localhost.output_dir }}/{{ config }}_{{ guid }}_kubeconfig"
+  tasks:
+  - name: Setup cluster-admin service account
+    when: openshift_cluster_admin_service_account_enable | bool
+    ansible.builtin.include_role:
+      name: openshift_cluster_admin_service_account
+
+- name: Step 005.3 - Deploy Workloads
   ansible.builtin.import_playbook: workloads.yml
 
-# - name: Step 005.3 Clean up Google SDK
+# - name: Step 005.4 Clean up Google SDK
 #   hosts: localhost
 #   gather_facts: false
 #   become: false

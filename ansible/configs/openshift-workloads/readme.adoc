@@ -6,7 +6,7 @@ This config is used to run OpenShift workloads on a single cluster or a list of 
 
 It is a config like any other agnosticd config and allows integration of this particular kind of deployment into our eco-system.
 
-It can access a single cluster via a bastion or multiple clusters by direct connection the the cluster apis.
+It can access a single or multiple clusters by direct connection the the cluster apis.
 
 == Create
 
@@ -16,8 +16,8 @@ It can access a single cluster via a bastion or multiple clusters by direct conn
 cloud_provider: none
 env_type: ocp-workloads
 
-ocp_workloads:
-  - ocp4-workload-fuse-ignite
+openshift_workloads:
+- ocp4-workload-fuse-ignite
 
 target_host: bastion.dev.mycluster.mydomain.com
 

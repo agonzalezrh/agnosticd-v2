@@ -1,17 +1,7 @@
 ---
-# ===================================================================
-# Additional Collections & roles to be installed for this config
-# ===================================================================
-# requirements_content:
-#   collections:
-#   # Core OpenShift Workloads
-#   - name: https://github.com/agnosticd/core_workloads.git
-#     type: git
-#     version: main
-
 # List of Clusters with credentials
 # A cluster with name `default` is used when no target clusters are specified for the individual workloads
-# clusters
+# openshift_workload_deployer_clusters
 # - openshift_app:
 #     api_url: ...
 #     api_key: ...
@@ -19,7 +9,8 @@
 # - openshift_db:
 #     api_url: ...
 #     api_key: ...
-clusters:
+
+openshift_workload_deployer_clusters:
 - default:
     api_url: "<FROM SECRET>"
     api_key: "<FROM SECRET>"
@@ -29,7 +20,7 @@ clusters:
 # If no clusters are specified then the default cluster is used.
 # If clusters are specified cluster names must match a cluster in the list of clusters
 #
-# workloads:
+# openshift_workload_deployer_workloads:
 # - name: agnosticd.core_workloads.ocp4_workload_authentication_htpasswd
 #   clusters:
 #   - openshift_app
@@ -42,9 +33,9 @@ clusters:
 #   - openshift_db
 #
 # Simple example (all workloads deployed to the default cluster):
-# workloads:
+# openshift_workload_deployer_workloads:
 # - name: agnosticd.core_workloads.ocp4_workload_authentication_htpasswd
 # - name: rhpds.mitzi.ocp4_workload_mitzi_app
 # - name: rhpds.mitzi.ocp4_workload_mitzi_db
 
-workloads: []
+openshift_workload_deployer_workloads: []
