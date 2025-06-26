@@ -4,16 +4,16 @@
 # openshift_workload_deployer_clusters
 # - openshift_app:
 #     api_url: ...
-#     api_key: ...
+#     api_token: ...
 #
 # - openshift_db:
 #     api_url: ...
-#     api_key: ...
+#     api_token: ...
 
 openshift_workload_deployer_clusters:
 - default:
     api_url: "<FROM SECRET>"
-    api_key: "<FROM SECRET>"
+    api_token: "<FROM SECRET>"
 
 # List of workloads to apply to clusters with cluster selector
 #
@@ -34,8 +34,8 @@ openshift_workload_deployer_clusters:
 #
 # Simple example (all workloads deployed to the default cluster):
 # openshift_workload_deployer_workloads:
-# - name: agnosticd.core_workloads.ocp4_workload_authentication_htpasswd
-# - name: rhpds.mitzi.ocp4_workload_mitzi_app
-# - name: rhpds.mitzi.ocp4_workload_mitzi_db
+# - agnosticd.core_workloads.ocp4_workload_authentication_htpasswd
+# - rhpds.mitzi.ocp4_workload_mitzi_app
+# - rhpds.mitzi.ocp4_workload_mitzi_db
 
 openshift_workload_deployer_workloads: []

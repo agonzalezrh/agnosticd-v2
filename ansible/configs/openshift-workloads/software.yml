@@ -16,13 +16,13 @@
         {{ (workloads | length > 0) and (workloads[0].clusters is not defined) }}
 
   - name: Convert simple format to complex format
-    when: _workloads_simple_format
+    when: _workloads_simple_format | bool
     ansible.builtin.set_fact:
       _workloads: >-
-        {{ workloads | json_query("[].{name: name, clusters: ['default']}") }}
+        {{ workloads | json_query("[].{name: @, clusters: ['default']}") }}
 
-  - name: Workloads übernehmen (falls bereits komplexes Format)
-    when: not _workloads_simple_format
+  - name: Use passed workloads (not simple sequence)
+    when: not _workloads_simple_format | bool
     ansible.builtin.set_fact:
       _workloads: "{{ workloads }}"
 

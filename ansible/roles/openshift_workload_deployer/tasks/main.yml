@@ -1,41 +1,24 @@
 ---
-- name: Prepare kubeconfigs if configured
-  loop: "{{ __openshift_workloads_cluster_names }}"
-  loop_control:
-    loop_var: __cluster_name
-  vars:
-    __cluster_vars: >-
-      {{
-        {
-          "api_ca_cert": openshift_api_ca_cert | default(''),
-          "api_key": openshift_api_key,
-          "api_url": openshift_api_url,
-        } if __cluster_name == 'default' else lookup('ansible.builtin.vars', __cluster_name)
-      }}
-    __kubeconfig_dir: >-
-      {{ output_dir if ansible_connection == 'local' else '/tmp' }}
-    __kubeconfig_file: >-
-      {{ 'kubeconfig' if __cluster_name == 'default' else __cluster_name ~ '.kubeconfig' }}
-    __kubeconfig_path: >-
-      {{ __kubeconfig_dir }}/{{ __kubeconfig_file }}
-  when:
-  - __cluster_vars.api_key is defined
-  - __cluster_vars.api_url is defined
-  ansible.builtin.include_tasks: setup_cluster_kubeconfig.yml
+- name: Debug workloads and clusters
+  ansible.builtin.debug:
+    msg: |
+      openshift_workload_deployer_clusters: {{ openshift_workload_deployer_clusters | to_nice_yaml }}
+      openshift_workload_deployer_workloads: {{ openshift_workload_deployer_workloads | to_nice_yaml }}
 
-- name: Call host-ocp4-set-facts for each cluster
-  loop: "{{ __openshift_workloads_cluster_names }}"
-  loop_control:
-    loop_var: host_ocp4_set_facts_cluster_name
+- name: Build cluster lookup dictionary
+  ansible.builtin.set_fact:
+    _openshift_cluster_lookup: "{{ _openshift_cluster_lookup | default({}) | combine(item) }}"
+  loop: "{{ openshift_workload_deployer_clusters }}"
+
+- name: Deploy workloads to clusters
   ansible.builtin.include_role:
-    name: host-ocp4-set-facts
+    name: "{{ workload_item.0.name }}"
     apply:
-      environment: >-
-        {{ openshift_workloads_cluster_environment[host_ocp4_set_facts_cluster_name] | default({}) }}
-
-- name: Provision Workloads on cluster(s)
-  loop: "{{ openshift_workloads }}"
+      environment:
+        K8S_AUTH_HOST: "https://{{ _openshift_cluster_lookup[workload_item.1].api_url }}:6443"
+        K8S_AUTH_API_KEY: "{{ _openshift_cluster_lookup[workload_item.1].api_token }}"
+        K8S_AUTH_VERIFY_SSL: false
+  loop: "{{ openshift_workload_deployer_workloads | subelements('clusters') }}"
   loop_control:
-    loop_var: __workload
-    label: "{{ __workload.name }}"
-  ansible.builtin.include_tasks: run_workload_on_clusters.yml
+    loop_var: workload_item
+    label: "Role: {{ workload_item.0.name }} on Cluster: {{ workload_item.1 }}"

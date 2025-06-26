@@ -27,6 +27,3 @@
     loop_control:
       loop_var: __workload
       label: "{{ __workload.name }}"
-
-- name: Cleanup
-  ansible.builtin.import_playbook: cleanup.yml
