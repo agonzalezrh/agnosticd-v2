@@ -2,7 +2,7 @@
 
 <!--- Please read first:
 
-https://github.com/redhat-cop/agnosticd/blob/development/docs/Contributing.adoc
+https://github.com/agnosticd/agnosticd-v2/blob/main/docs/contributing.adoc
 
 -->
 
