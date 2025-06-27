@@ -20,5 +20,20 @@ host_common_packages_el9:
 - tree
 - jq
 
+# Common Packages to install for RHEL 10
+host_common_packages_el10:
+- python3
+- unzip
+- bash-completion
+- tmux
+- bind-utils
+- wget
+- nano
+- git
+- vim-enhanced
+- httpd-tools
+- tree
+- jq
+
 # Extra packages to install in addition to common packages
 host_common_packages_extra: []

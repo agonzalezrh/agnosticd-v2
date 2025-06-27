@@ -64,9 +64,9 @@
   ansible.builtin.setup:
     gather_subset: min
 
-- name: Install common packages for RHEL 9
-  when: ansible_distribution_major_version == "9"
-  ansible.builtin.import_tasks: packages_el9.yml
+- name: Install common packages for RHEL {{ ansible_distribution_major_version }}
+  when: ansible_distribution_major_version in ["9", "10"]
+  ansible.builtin.include_tasks: "packages_el{{ ansible_distribution_major_version }}.yml"
 
 - name: Install extra packages
   when: host_common_packages_extra | default([]) | length > 0
