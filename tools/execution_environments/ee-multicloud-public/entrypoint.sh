@@ -156,7 +156,6 @@ export HOME=/home/runner
 
 # Logic to run the playbook to install dynamic dependencies before handing over to the requested command.
 # Process Arguments differently if running in ansible-navigator or in AAP
-echo "Original arguments: $*"
 log_debug "Original arguments: $*"
 
 # Save originally passed arguments for chain-exec later
@@ -182,7 +181,6 @@ else
   # Only shift in non-AAP context -> Ansible Navigator
   shift 2
   log_debug "Non-AAP environment. Running with processed arguments"
-  echo "Remaining arguments: $*"
   log_debug "Remaining arguments: $*"
   /usr/local/bin/ansible-playbook ./ansible/install_dynamic_dependencies.yml "$@"
 fi
