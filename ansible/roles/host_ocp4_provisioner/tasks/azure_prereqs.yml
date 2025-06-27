@@ -1,5 +1,6 @@
 ---
 - name: Install required packages for Azure CLI
+  become: true
   ansible.builtin.package:
     name:
     - libffi
@@ -10,9 +11,11 @@
     - python3-pip
 
 - name: Import Microsoft PKI
-  ansible.builtin.shell: "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc"
+  become: true
+  ansible.builtin.shell: rpm --import https://packages.microsoft.com/keys/microsoft.asc
 
 - name: Creating Azure CLI repo
+  become: true
   ansible.builtin.blockinfile:
     path: /etc/yum.repos.d/azure-cli.repo
     create: true
@@ -26,11 +29,11 @@
       gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 
 - name: Install Azure CLI
+  become: true
   ansible.builtin.package:
     name: azure-cli
 
 - name: Log into Azure
-  become: false
   no_log: true
   ansible.builtin.command: >-
     az login --service-principal

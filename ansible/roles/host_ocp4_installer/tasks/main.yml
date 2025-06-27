@@ -1,22 +1,25 @@
 ---
+- name: Assert OpenShift Versions
+  ansible.builtin.assert:
+    that:
+    - host_ocp4_installer_version is version_compare('4.18', '>=')
+    fail_msg: "OpenShift version must be 4.18 or higher"
+
 - name: Install client and OpenShift Installer binaries
-  ansible.builtin.import_tasks: install_installer.yml
+  ansible.builtin.include_tasks: install_installer.yml
 
 - name: Run the installation
   when: host_ocp4_installer_install_openshift | bool
   block:
   - name: Enable FIPS mode on host
-    when:
-    - host_ocp4_installer_fips_enable | default(false) | bool
-    - host_ocp4_installer_version is version_compare('4.16', '>=')
-    become: true
-    ansible.builtin.import_tasks: setup_fips_host.yml
+    when: host_ocp4_installer_fips_enable | default(false) | bool
+    ansible.builtin.include_tasks: setup_fips_host.yml
 
   - name: Generate install_config.yaml
-    ansible.builtin.import_tasks: generate_install_config.yml
+    ansible.builtin.include_tasks: generate_install_config.yml
 
   - name: Installation and getting the logs
-    become: false
+    # become: false
     block:
     - name: Create openshift-install manifests
       ansible.builtin.include_tasks: create_manifests.yml
@@ -135,9 +138,9 @@
 
 - name: Set up Student User
   when: bastion_setup_student_user | bool
+  become: true
   block:
   - name: Make sure .kube directory exists in /home/{{ bastion_student_user_name }}
-    become: true
     ansible.builtin.file:
       state: directory
       path: "/home/{{ bastion_student_user_name }}/.kube"
@@ -146,7 +149,6 @@
       mode: u=rwx,go=
 
   - name: Copy kubeconfig to /home/{{ bastion_student_user_name }}
-    become: true
     ansible.builtin.copy:
       src: /home/{{ ansible_user }}/{{ cluster_name }}/auth/kubeconfig
       dest: /home/{{ bastion_student_user_name }}/.kube/config

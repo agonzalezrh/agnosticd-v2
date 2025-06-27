@@ -29,9 +29,9 @@ host_ocp4_installer_root_url: >-
   else 'http://mirror.openshift.com/pub/openshift-v4/clients'
   }}
 
-# Use 4.18 for latest available release in the `stable-4.18` directory.
-# Use 4.18.1 for exactly the specified release
-host_ocp4_installer_version: "4.18"
+# Use 4.19 for latest available release in the `stable-4.19` directory.
+# Use 4.19.1 for exactly the specified release
+host_ocp4_installer_version: "4.19"
 
 # Install an OpenShift 4 Developer Preview Release
 # Specify the direct link to the OpenShift installer and the OpenShift client
@@ -39,8 +39,8 @@ host_ocp4_installer_version: "4.18"
 # Set the installer version for other dependencies to know which version is being used
 #
 # host_ocp4_installer_use_dev_preview: true
-# host_ocp4_installer_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/candidate-4.18/openshift-install-linux.tar.gz
-# host_ocp4_client_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/candidate-4.18/openshift-client-linux.tar.gz
+# host_ocp4_installer_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/candidate-4.19/openshift-install-linux.tar.gz
+# host_ocp4_client_url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/candidate-4.19/openshift-client-linux.tar.gz
 
 # When control_plane_storage_type == io1 or io2,
 # calculate the IOPS:

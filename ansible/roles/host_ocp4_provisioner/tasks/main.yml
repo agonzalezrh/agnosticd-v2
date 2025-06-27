@@ -5,15 +5,18 @@
     cloud_provider == "azure" or
     cloud_provider == "gcp" or
     cloud_provider == "vmc"
-  ansible.builtin.import_tasks: "{{ cloud_provider }}_prereqs.yml"
+  ansible.builtin.include_tasks: "{{ cloud_provider }}_prereqs.yml"
 
-- name: Install slirp4netns
-  ansible.builtin.package:
-    name: slirp4netns
+- name: Root tasks
+  become: true
+  block:
+  - name: Install slirp4netns
+    ansible.builtin.package:
+      name: slirp4netns
 
-- name: Update max_user_namespaces in sysctl
-  ansible.posix.sysctl:
-    name: user.max_user_namespaces
-    value: "28633"
-    sysctl_file: /etc/sysctl.d/userns.conf
-    reload: true
+  - name: Update max_user_namespaces in sysctl
+    ansible.posix.sysctl:
+      name: user.max_user_namespaces
+      value: "28633"
+      sysctl_file: /etc/sysctl.d/userns.conf
+      reload: true
