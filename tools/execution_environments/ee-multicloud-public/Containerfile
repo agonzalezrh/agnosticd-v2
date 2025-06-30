@@ -93,6 +93,9 @@ ENV HOME=/home/runner
 # Add report script for changelog and troubleshooting
 COPY ee-report.sh /usr/local/bin/ee-report
 
+RUN ln -sf /opt/ibmcloud/.bluemix /runner/.bluemix && \
+    ln -sf /opt/ibmcloud/.bluemix /home/runner/.bluemix
+
 # Add entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint
 RUN chmod 755 /usr/local/bin/entrypoint
