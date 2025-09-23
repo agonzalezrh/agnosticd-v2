@@ -4,12 +4,14 @@
   gather_facts: false
   become: false
   tasks:
-  - name: Remove namespaced workload "{{ workload_loop_var | default('None') }}"
+  - name: Remove namespaced workload in reverse order
     when: workloads | default([]) | length > 0
-    vars:
-      ACTION: destroy
-    ansible.builtin.include_role:
-      name: "{{ workload_loop_var }}"
-    loop: "{{ workloads | reverse }}"
-    loop_control:
-      loop_var: workload_loop_var
+    block:
+    - name: Remove namespaced workload "{{ workload_loop_var | default('None') }}"
+      ansible.builtin.include_role:
+        name: "{{ workload_loop_var }}"
+      vars:
+        ACTION: "destroy"
+      loop: "{{ workloads | reverse }}"
+      loop_control:
+        loop_var: workload_loop_var
