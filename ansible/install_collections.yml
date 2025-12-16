@@ -29,7 +29,7 @@
 - name: Debug COLLECTIONS_PATHS
   ansible.builtin.debug:
     var: _collections_path
-    verbosity: 2
+    # verbosity: 2
 
 - name: Install collections from requirements.yml
   vars:
