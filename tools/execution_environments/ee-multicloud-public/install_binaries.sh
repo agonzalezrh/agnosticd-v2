@@ -38,11 +38,7 @@ install -t /usr/bin bw
 rm bw bw.zip
 
 # AWS CLI
-# aws_version=2.4.23
-# curl -s -L "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m)-${aws_version}.zip" \
-#     -o "awscliv2.zip"
-curl -s -L "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" \
-    -o "awscliv2.zip"
+curl -s -L "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o awscliv2.zip
 
 unzip -q awscliv2.zip
 ./aws/install
@@ -50,16 +46,52 @@ unzip -q awscliv2.zip
 rm awscliv2.zip
 rm -rf aws
 
-# helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
+# helm (extract with Python to avoid system tar "Cannot open: Invalid argument" on overlay fs in buildah)
+HELM_TAG=$(curl -sL https://get.helm.sh/helm3-latest-version | grep -E '^v[0-9]' || true)
+HELM_TAG=${HELM_TAG:-v3.20.0}
+HELM_DIST="helm-${HELM_TAG}-linux-${ARCH}.tar.gz"
+curl -sSL "https://get.helm.sh/${HELM_DIST}" -o "/tmp/${HELM_DIST}"
+python3 -c "
+import sys, tarfile, warnings
+warnings.filterwarnings('ignore', category=RuntimeWarning, module='tarfile')
+with tarfile.open('/tmp/${HELM_DIST}', 'r:gz') as tf:
+    kwargs = {'filter': 'fully_trusted'} if sys.version_info >= (3, 12) else {}
+    tf.extractall('/tmp', **kwargs)
+"
+install -t /usr/bin "/tmp/linux-${ARCH}/helm"
+rm -rf "/tmp/linux-${ARCH}" "/tmp/${HELM_DIST}"
 
-# IBM Cloud binary
-curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+# IBM Cloud CLI (extract with Python to avoid system tar "Cannot open: Invalid argument" on overlay fs in buildah)
+IBM_CLI_VERSION=$(curl -sL https://api.github.com/repos/IBM-Cloud/ibm-cloud-cli-release/releases/latest 2>/dev/null | jq -r '.tag_name // empty' | sed 's/^v//')
+IBM_CLI_VERSION=${IBM_CLI_VERSION:-2.41.1}
+# IBM uses amd64, arm64, 386, ppc64le, s390x - our ARCH already matches for main platforms
+IBM_ARCH="${ARCH}"
+case "${ARCH}" in
+    armv5|armv6|arm) IBM_ARCH="arm64";;  # no 32-bit arm, use arm64 as best effort
+esac
+IBM_TGZ="IBM_Cloud_CLI_${IBM_CLI_VERSION}_${IBM_ARCH}.tar.gz"
+curl -fsSL "https://download.clis.cloud.ibm.com/ibm-cloud-cli-dn/${IBM_CLI_VERSION}/${IBM_TGZ}" -o "/tmp/${IBM_TGZ}"
+python3 -c "
+import sys, tarfile, warnings
+warnings.filterwarnings('ignore', category=RuntimeWarning, module='tarfile')
+with tarfile.open('/tmp/${IBM_TGZ}', 'r:gz') as tf:
+    kwargs = {'filter': 'fully_trusted'} if sys.version_info >= (3, 12) else {}
+    tf.extractall('/tmp', **kwargs)
+"
+# Find bin/ibmcloud regardless of top-level directory name
+IBM_BIN=$(find /tmp -type f -path '*/bin/ibmcloud' 2>/dev/null | head -1)
+if [ -n "${IBM_BIN}" ]; then
+    IBM_DIR=$(dirname "$(dirname "$IBM_BIN")")
+    if [ "${IBM_DIR}" != "/tmp" ]; then
+        rm -rf /opt/ibmcloud
+        mv "${IBM_DIR}" /opt/ibmcloud
+        chmod 755 /opt/ibmcloud/bin/ibmcloud
+        ln -sf /opt/ibmcloud/bin/ibmcloud /usr/bin/ibmcloud
+    fi
+fi
+rm -f "/tmp/${IBM_TGZ}"
 
 # Install all plugins, best effort
 export IBMCLOUD_HOME=/opt/ibmcloud
-mkdir -p /opt/ibmcloud
 ibmcloud plugin install --all || true
 ibmcloud config --check-version=false
