@@ -144,6 +144,15 @@
     loop_control:
       label: "{{ item.metadata.name }}"                   # Clean logging output using the MachineConfig name
 
+  - name: Patch install-config if indicated
+    rhpds.assisted_installer.patch_install_config:
+      cluster_id: "{{ newcluster.result.id }}"
+      offline_token: "{{ ai_offline_token }}"
+      install_config_params: "{{ ai_patch_install_config | to_json}}"
+    when:
+      - ai_patch_install_config is defined
+      - ai_patch_install_config | length > 0
+
   - name: Setup infrastructure
     ansible.builtin.include_tasks: setup_infrastructure.yml
 
