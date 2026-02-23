@@ -69,7 +69,7 @@
     offline_token: "{{ ai_offline_token }}"
     pull_secret: "{{ ai_pull_secret }}"
     static_network_config: "{{ static_network_config }}"
-    ignition_config_override: "{{ ai_ignition_config_override | default('{}') }}"
+    ignition_config_override: "{{ ai_ignition_config_override | default({}) | to_json }}"
   register: newinfraenv
 
 - name: Delete existing installation ISO DataVolume if it exists
