@@ -123,6 +123,7 @@
       file_name: 98_sysctl-control-plane.yaml
       folder: openshift
 
+  - name: Add mirror registry
     rhpds.assisted_installer.create_manifest:
       cluster_id: "{{ newcluster.result.id }}"
       offline_token: "{{ ai_offline_token }}"
